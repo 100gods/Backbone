@@ -1,0 +1,67 @@
+.wrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -40px;
+}
+
+.wrapper > .container{
+	padding-top: 60px;
+}
+
+.bootstrap-select.pulldown-long {
+	width: 270px;
+}
+.bootstrap-select.pulldown-medium {
+	width: 170px;
+}
+.bootstrap-select.pulldown-small {
+	width: 120px;
+}
+.bootstrap-select.pulldown-mini {
+	width: 70px;
+}
+.top-nav button {
+	border: none;
+}
+
+.dropdown >a >b {
+	border-top-color:#333 !important;
+}
+
+.dropdown >a:hover {
+	background:#E5E5E5	 !important;
+	color:black !important;
+}
+
+
+.dropdown >a:hover >b{
+	border-top-color:black !important;
+}
+
+.navbar {
+	background:white;
+}
+
+.open >a{
+	background:#E5E5E5	 !important;
+	color:black !important;
+}
+
+
+.open .caret {
+	border-top-color:black !important;
+}
+
+.span1.span1-half{
+	margin-left: 0px;
+	width:111px;
+	text-align: center;
+}
+.span1.span1-half a {
+	color:#333;
+}
+
+.carousel-inner.carousel-inner-ayata {
+	height:36px;
+}

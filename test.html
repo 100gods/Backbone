@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Marionette Contact Manager</title>
+<link href="./assets/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container">
+			<span class="brand" href="#">Slider manager</span>
+		</div>
+	</div>
+</div>
+<br><br>
+<div id="main-region" class="container">
+	<p>Here is static content in the web page. You'll notice that it gets
+		replaced by our app as soon as we start it.</p>
+</div>
+<div id="other-region" class="container">
+</div>
+<script src="./assets/js/vendor/jquery.js"></script>
+<script src="./assets/js/vendor/json2.js"></script>
+<script src="./assets/js/vendor/underscore.js"></script>
+<script src="./assets/js/vendor/backbone.js"></script>
+<script src="./assets/js/vendor/backbone.marionette.js"></script>
+
+
+
+<link href="./assets/css/slider.css" rel="stylesheet" />
+<link href="./assets/css/demo.css" rel="stylesheet" />
+<link href="./assets/css/bootstrap.css" rel="stylesheet" />
+<link href="./assets/css/bootstrap.ayata.css" rel="stylesheet" />
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script type="text/javascript" src="./assets/js/slider/bootstrap-slider.js"></script>
+<!-- <script type="text/javascript" src="./assets/js/slider/Demoslider.js"></script> -->
+<script type="text/javascript" src="./assets/js/slider/update.js"></script>
+
+
+
+
+
+
+<script type="text/javascript" id="slider-template">
+
+<div id="slider<%= id%>">
+<script type="text/javascript"> 
+    $('#slider<%= id%>').slider({
+	 orientation: '<%= orientation%>',
+	        min: <%= min%>,
+	        max: <%= max%>,
+	        value: <%= value%>,
+	        step:<%= step%>,
+	        tooltip:'<%= tooltip%>',
+	        handle: '<%= handle%>',
+	        formater: function(value) {
+	            return '→'+value.toFixed(2);
+	          }
+	        
+    });
+</script>
+</div>
+</script>
+
+<script type="text/javascript">
+var SliderManager = new Marionette.Application();
+
+SliderManager.addRegions({
+	mainRegion: "#main-region",
+	anotherRegion:"#other-region"
+
+});
+
+//Slider model 
+SliderManager.Slider = Backbone.Model.extend({
+	defaults : {
+			id:0,
+	 		orientation: "vertical",
+	        min: 0,
+	        max: 10,
+	        value: 5,
+	        step:0.1,
+	        tooltip:"show",
+	        handle: "square",
+	        handle: "hide"
+    }
+});
+
+SliderManager.SliderCollection = Backbone.Collection.extend({
+	model: SliderManager.Slider
+});
+
+
+// Contact view  
+
+SliderManager.SliderView = Backbone.Marionette.ItemView.extend({
+	tagName: "td",
+	id:"count",
+	template: "#slider-template" ,
+	events:{
+		"slide" : "update",
+		"click" : ""
+	},
+	block :function(ev){
+		console.log(ev);
+		alert('block');
+		ev.target.setAttribute('class',ev.target.className+' new');
+	},
+	update : function(ev){
+		// update 
+		var value=10;
+		var numberOfSliders=$('#row')[0].children.length;
+		var currentSlider=ev.target.id;
+		var total=0;
+		// check if the change value is allowed or not 
+		for (var i = numberOfSliders; i >0; i--) {
+				total+=$('#slider'+i).slider('getValue')[0].value === undefined ?(value/numberOfSliders):$('#slider'+i).slider('getValue')[0].value;
+			};
+		// dunn change any value if total >= 100
+		if (total >= value){
+			// old value of current slider 
+			$('#'+currentSlider).slider('setValue',(value-(total-ev.target.value)))
+		}else{
+			// calculate new value of each slider
+		var changeInValue=value-total
+		for (var i = numberOfSliders; i >0; i--) {
+			// donot update for the current slider 
+			if('slider'+i === currentSlider) continue;			
+			$('#slider'+i).slider('setValue',(changeInValue/(numberOfSliders-1))+($('#slider'+i).slider('getValue')[0].value === undefined ?(value/numberOfSliders):$('#slider'+i).slider('getValue')[0].value));
+			};	
+		}
+		
+	}
+});
+
+// collectionview
+
+SliderManager.SlidersView = Backbone.Marionette.CollectionView.extend({
+	tagName: "tr",
+	id:"row",
+	itemView: SliderManager.SliderView,
+	events :{
+		"click":'block'
+	},
+	block : function(ev){
+		console.log(ev);
+		alert('block');
+	}
+
+});
+
+
+SliderManager.on("initialize:after", function(){
+	
+	console.log("view");
+
+	var sliders = new SliderManager.SliderCollection([
+	{		orientation: "vertical",
+			id:1,
+	        min: 0,
+	        max: 10,
+	        value: (10/4),
+	        step:0.1,
+	        tooltip:"show",
+	        handle: "square",
+	        handle: "hide"
+	},
+	{		orientation: "vertical",
+			id:2,
+	        min: 0,
+	        max: 10,
+	        value: (10/4),
+	        step:0.1,
+	        tooltip:"show",
+	        handle: "square",
+	},
+	{		orientation: "vertical",
+			id:3,
+	        min: 0,
+	        max: 10,
+	        value: (10/4),
+	        step:0.1,
+	        tooltip:"show",
+	        handle: "square"
+	},
+	{		orientation: "vertical",
+			id:4,
+	        min: 0,
+	        max: 10,
+	        value: (10/4),
+	        step:0.1,
+	        tooltip:"show",
+	        handle: "square",
+	},{		orientation: "vertical",
+			id:5,
+	        min: 0,
+	        max: 10,
+	        value: (10/4),
+	        step:0.1,
+	        tooltip:"show",
+	        handle: "square"
+	}
+]);
+	var list_view=new SliderManager.SlidersView({
+		collection:sliders
+	});
+	SliderManager.mainRegion.show(list_view);
+//	SliderManager.anotherRegion.show(bullet_view);
+});
+console.log("SliderManager has started!");
+
+SliderManager.start();
+
+</script>
+
+</body>
+</html>

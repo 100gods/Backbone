@@ -1,0 +1,13 @@
+
+    .slider {
+        float: left;
+        width: 300px;
+        margin-left: 100px;
+        margin-top: 50px
+    }
+    #slider2 {
+        float: middle;
+        width: 300px;
+        margin-left: 100px;
+    }
+
