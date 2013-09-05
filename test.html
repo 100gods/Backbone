@@ -101,36 +101,61 @@ SliderManager.SliderView = Backbone.Marionette.ItemView.extend({
 	template: "#slider-template" ,
 	events:{
 		"slide" : "update",
-		"click" : ""
+		"click" : "block"
 	},
 	block :function(ev){
 		console.log(ev);
-		alert('block');
-		ev.target.setAttribute('class',ev.target.className+' new');
+		// block or un-block
+		var parent=ev.target;
+		while(true){
+			if(parent.parentNode.className == 'slider slider-vertical'){
+				// un-block code 
+				if(parent.parentNode.style.backgroundColor === 'grey'){
+					parent.parentNode.setAttribute('style','background-color: ');
+					parent.parentNode.childNodes[2].setAttribute('value','unblock')
+
+				}else{
+					parent.parentNode.setAttribute('style','background-color: grey');
+					parent.parentNode.childNodes[2].setAttribute('value','block')
+				}
+				break;
+			}
+			parent=parent.parentNode;
+		 }		
 	},
 	update : function(ev){
 		// update 
 		var value=10;
+		var numberOfSlidersUnBlocked=0;
 		var numberOfSliders=$('#row')[0].children.length;
 		var currentSlider=ev.target.id;
 		var total=0;
 		// check if the change value is allowed or not 
 		for (var i = numberOfSliders; i >0; i--) {
 				total+=$('#slider'+i).slider('getValue')[0].value === undefined ?(value/numberOfSliders):$('#slider'+i).slider('getValue')[0].value;
+				if($('#slider'+i).slider('getValue')[0].getAttribute('value') !== 'block'){
+					numberOfSlidersUnBlocked=numberOfSlidersUnBlocked+1;
+				}
 			};
-		// dunn change any value if total >= 100
-		if (total >= value){
+		// for block slider roll back to old value and do nothing 
+		if(ev.target.getAttribute('value') === 'block'){
+			$('#'+currentSlider).slider('setValue',(value-(total-ev.target.value)));
+		}else{
+			// dunn change any value if total > 100 % 
+		if (total  >= value){
 			// old value of current slider 
-			$('#'+currentSlider).slider('setValue',(value-(total-ev.target.value)))
+			$('#'+currentSlider).slider('setValue',(value-(total-ev.target.value)));
 		}else{
 			// calculate new value of each slider
 		var changeInValue=value-total
 		for (var i = numberOfSliders; i >0; i--) {
-			// donot update for the current slider 
-			if('slider'+i === currentSlider) continue;			
-			$('#slider'+i).slider('setValue',(changeInValue/(numberOfSliders-1))+($('#slider'+i).slider('getValue')[0].value === undefined ?(value/numberOfSliders):$('#slider'+i).slider('getValue')[0].value));
+			// donot update for the current slider or blocked sliders
+			if('slider'+i === currentSlider || $('#slider'+i).slider('getValue')[0].getAttribute('value') === 'block') continue;			
+			$('#slider'+i).slider('setValue',(changeInValue/(numberOfSlidersUnBlocked-1))+($('#slider'+i).slider('getValue')[0].value === undefined ?(value/numberOfSlidersUnBlocked):$('#slider'+i).slider('getValue')[0].value));
 			};	
 		}
+		}
+		
 		
 	}
 });
@@ -142,7 +167,7 @@ SliderManager.SlidersView = Backbone.Marionette.CollectionView.extend({
 	id:"row",
 	itemView: SliderManager.SliderView,
 	events :{
-		"click":'block'
+		"dblclick":''
 	},
 	block : function(ev){
 		console.log(ev);
