@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Marionette Contact Manager</title>
+<title>Slider</title>
 <link href="./assets/css/bootstrap.css" rel="stylesheet">
 </head>
 <body>
@@ -103,7 +103,7 @@ SliderManager.SliderView = Backbone.Marionette.ItemView.extend({
 	events:{
 		"slide" : "update",
 		"click .slider-track" : "",
-		"click .img":'lock'
+		"click .img":'block'
 	},reset:function(ev){
 		// @DECIRPTED 
 		var value=100;
@@ -121,44 +121,7 @@ SliderManager.SliderView = Backbone.Marionette.ItemView.extend({
 			$('#'+currentSlider)[0].setAttribute('hold',(value-$('#'+currentSlider).parent().children().children()[4].textContent*1));
 			return false;
 	},lock:function(ev){
-		// Img Lock 
-		// return if only two children 
-		var numberOfSliders=$('#row')[0].children.length;
-		var numberofUnlocked=0;
-		if (numberOfSliders ===	2) { 
-			// TODO : remove normal alert 
-			alert('cannot lock'); 
-			return false;
-		};
-		for (var i = numberOfSliders; i >0; i--) {
-			if ($('#slider'+i).slider('getValue')[0].getAttribute('flag') !== 'block') {
-				numberofUnlocked++;
-			};
-		}
-		if (numberofUnlocked <= 2) {
-			// TODO : remove normal alert 
-			alert('cannot lock'); 
-			return false;
-		};
-
-		if(ev.target.parentNode.childNodes[5].children[0].style.backgroundColor === 'rgb(173, 216, 230)'){
-			ev.target.parentNode.childNodes[5].setAttribute('style','background-color:');	
-			ev.target.parentNode.childNodes[5].childNodes[0].setAttribute('style','background-color: steelblue');			
-			ev.target.parentNode.childNodes[5].childNodes[2].setAttribute('flag','unblock');
-			ev.target.parentNode.childNodes[5].setAttribute('flagValue','0');
-			ev.target.setAttribute('src','./assets/img/glyphicons_204_unlock.png');
-			ev.target.setAttribute('style','opacity: 0.8');
-
-		}else{
-			ev.target.parentNode.childNodes[5].setAttribute('style','background-color: whitesmoke');
-			ev.target.parentNode.childNodes[5].childNodes[0].setAttribute('style','background-color: lightblue');
-					//parent.parentNode.childNodes[0].children[0].setAttribute('style','background-color: rgb(173, 216, 330)')
-			ev.target.parentNode.childNodes[5].childNodes[2].setAttribute('flag','block');
-			ev.target.parentNode.childNodes[5].childNodes[2].setAttribute('flagValue',(100-ev.target.parentNode.childNodes[5].childNodes[1].children[1].textContent*1));
-			ev.target.setAttribute('src','./assets/img/glyphicons_203_lock.png');
-			//opacity: 0.5;
-			ev.target.setAttribute('style','opacity: 0.5');
-		}
+		// will be update soon 
 	},
 	block :function(ev){
 		// handle click lock 
@@ -188,150 +151,12 @@ SliderManager.SliderView = Backbone.Marionette.ItemView.extend({
 			parent=parent.parentNode;
 		 }		
 	},
-	update:function(ev){
-		// Main slider update function
-		// update 
-		var value=100;
-		var fullSlider=[];
-		var numberOfSlidersUnBlocked=0;
-		var numberOfSliders=$('#row')[0].children.length;
-		var currentSlider=ev.target.id;
-		var total=0;
-		var blockedValue=0;
-		var sliderOldValue={};
-		// block logic
-		if (ev.target.getAttribute('flag') === 'block') {
-			$('#'+ev.target.id).slider('setValue',$('#'+ev.target.id).slider('getValue')[0].getAttribute('flagValue')*1);
-			return false
-		};
-		// check if the change value is allowed or not 
-		for (var i = numberOfSliders; i >0; i--) {
-			var curValue=0;
-			if($('#slider'+i).slider('getValue')[0].value === undefined ){
-					curValue=value-$('#slider'+i).parent().children().children()[4].textContent*1;		
-			}else{
-				curValue=value-$('#slider'+i).parent().children().children()[4].textContent*1;
-			//	curValue=$('#slider'+i).slider('getValue')[0].value ;
-			}
-			// make a list of slider whoz cur-value is 100 and cannot be given more value 
-			if(curValue === 100 && '#'+currentSlider !== '#slider'+i ) fullSlider.push('#slider'+i);
-				total+=(value-curValue);
-				if( $('#slider'+i).slider('getValue')[0].getAttribute('flag') !== 'block') {
-					// if (curValue !== 100) {numberOfSlidersUnBlocked=numberOfSlidersUnBlocked+1;}
-					numberOfSlidersUnBlocked=numberOfSlidersUnBlocked+1;				
-				}else{
-					// calculate the value of all blocked slider 
-					blockedValue=blockedValue+value-curValue;
-				}
-			};
-			
-		var changeInValue=value-total;
-		var unblocked = value-blockedValue;
-		// set the min value of current slider as the nublocked value left 
-		// $('#'+currentSlider).data('slider').min=value-unblocked;
-		// slider except one is blocked 
-		if( 1 === numberOfSlidersUnBlocked ){
-		//	$('#'+ev.target.id).slider('setValue',$('#'+ev.target.id)[0].getAttribute('hold')*1);
-			$('#'+currentSlider).slider('setValue',(value-$('#'+currentSlider).parent().children().children()[4].textContent*1-changeInValue) );
-			$('#'+currentSlider)[0].setAttribute('hold',(value-$('#'+currentSlider).parent().children().children()[4].textContent*1));
-			return false;
-		}
-		// bug fix for flickering of value when any number of slider is blocked
-		// if( (numberOfSliders-numberOfSlidersUnBlocked) >=1 ){
-		// 	// check if the current value of current slider is not greater than the unblocked value 
-		// 	if( unblocked <= $('#'+currentSlider).parent().children().children()[4].textContent*1 && changeInValue<0){
-		// 		//$('#'+currentSlider).data('slider').value=unblocked;
-		// 		 $('#'+currentSlider).slider('setValue',(value-$('#'+currentSlider).parent().children().children()[4].textContent*1-changeInValue) );
-		// 		$('#'+currentSlider)[0].setAttribute('hold',(value-$('#'+currentSlider).parent().children().children()[4].textContent*1));
-		// 		return false;
-		// 	}
-
-
-		// }
-		var flag=false;
-		// if change is +ve,decrease the numberofUnlocked slider by fullslider
-		if (changeInValue < 0){
-			numberOfSlidersUnBlocked=numberOfSlidersUnBlocked-fullSlider.length;
-		}else{
-			flag=true;
-		}
-		
-		// for block slider roll back to old value and do nothing 
-		if(ev.target.getAttribute('flag') === 'block'){
-			$('#'+currentSlider).slider('setValue',(value-$('#'+currentSlider).parent().children().children()[4].textContent*1-changeInValue) );
-			$('#'+currentSlider)[0].setAttribute('hold',(value-$('#'+currentSlider).parent().children().children()[4].textContent*1-changeInValue));
-		}else if(blockedValue >= value || changeInValue > (total-blockedValue)){
-			// change nothing
-			// old value of current slider 
-			$('#'+currentSlider).slider('setValue',(value-$('#'+currentSlider).parent().children().children()[4].textContent*1-changeInValue));
-			$('#'+currentSlider)[0].setAttribute('hold',(value-$('#'+currentSlider).parent().children().children()[4].textContent*1));
-		}else{
-			var validCount=0;
-			var validSlider=[];
-			var validValue=0;
-			// the number of slider with 0<= newvalue<=100
-			 for (var i = numberOfSliders; i >0; i--) {
-			 	// the value gets bigger than 100 && less than 0,dunn add the value to those slider
-				var curValue=0;
-				if($('#slider'+i).slider('getValue')[0].value === undefined ){
-					curValue=value-$('#slider'+i).parent().children().children()[4].textContent*1;	
-				}else{
-					curValue=value-$('#slider'+i).parent().children().children()[4].textContent*1;
-					//curValue=$('#slider'+i).slider('getValue')[0].value ;
-				}
-				sliderOldValue['#slider'+i]=curValue;
-				// the new value 
-				var temp = 0;
-				if ('slider'+i === currentSlider || $('#slider'+i).slider('getValue')[0].getAttribute('flag') === 'block') { 
-					temp=curValue
-				}else temp=curValue-changeInValue/(numberOfSlidersUnBlocked-1);
-				if (temp <= 100 && temp >= 0 && $('#slider'+i).slider('getValue')[0].getAttribute('flag') !== 'block'){
-						validValue+=(value-temp);
-						validCount++;
-						validSlider.push(i);
-				}
-			 }
-			 if ( validValue > unblocked || validCount === 0){
-			 // reset the current slider  
-			 	if ( unblocked <= $('#'+currentSlider).parent().children().children()[4].textContent*1 && changeInValue<0 ){
-			 		$('#'+currentSlider).slider('setValue',(value-unblocked));
-			 		$('#'+currentSlider)[0].setAttribute('hold',(value-unblocked));
-			 		return false;
-			 	}
-			 	$('#'+currentSlider).slider('setValue',(value-$('#'+currentSlider).parent().children().children()[4].textContent*1-changeInValue));
-			 	$('#'+currentSlider).slider('setValue',(value-$('#'+currentSlider).parent().children().children()[4].textContent*1))
-				$('#'+currentSlider)[0].setAttribute('hold',(value-$('#'+currentSlider).parent().children().children()[4].textContent*1));
-				return false;
-			 };
-			 // now update the changed
-			 for (var i = numberOfSliders ; i >0; i--) {
-			 	if (validSlider.indexOf(i) !== -1 ){
-				 	var curValue=0;
-					if($('#slider'+i).slider('getValue')[0].value === undefined ){
-						curValue=value-$('#slider'+i).parent().children().children()[4].textContent*1;
-					}else{
-						curValue=value-$('#slider'+i).parent().children().children()[4].textContent*1;
-						//curValue=$('#slider'+i).slider('getValue')[0].value ;
-					}
-					// the new value 
-					var temp = curValue-changeInValue/(validCount-1);
-					if('slider'+i === currentSlider || $('#slider'+i).slider('getValue')[0].getAttribute('flag') === 'block') {
-						continue;
-					}else{
-						$('#slider'+i).slider('setValue',temp);
-					 	$('#slider'+i)[0].setAttribute('hold',temp);
-					}
-
-			 	}else{
-			 		continue;
-			 	}
-			 }
-		
-		}
+	test:function(ev){
+	// Will be updated soon 
 		
 	}
 	,
-	test : function(ev){
+	update : function(ev){
 		//@Decripted 
 		// update 
 		var value=100;
