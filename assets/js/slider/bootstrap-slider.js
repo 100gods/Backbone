@@ -192,7 +192,11 @@
 		},
 
 		mousedown: function(ev) {
-
+			// HACK to fix the click event navigation
+			if (ev.originalEvent.srcElement.className === 'slider-track' || ev.originalEvent.srcElement.className === 'slider-selection'){
+				return false;
+			};
+			//return false;
 			// Touch: Get the original event:
 			if (this.touchCapable && ev.type === 'touchstart') {
 				ev = ev.originalEvent;

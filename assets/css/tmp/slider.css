@@ -6,6 +6,20 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  */
+ .slider .slider-vertical .new{
+    height: 100%;
+    width: 20px;
+    margin-top: -5px;
+    top: 50%;
+    left: 0;
+ }
+ .slider .slider-horizontal .new{
+    height: 100%;
+    width: 20px;
+    margin-top: -5px;
+    top: 50%;
+    left: 0;
+ }
 .slider {
   display: inline-block;
   vertical-align: middle;
@@ -67,7 +81,7 @@
   margin-left: 0;
 }
 .slider input {
-  display: none !important;
+  display: none;
 }
 .slider .tooltip-inner {
   white-space: nowrap;
